@@ -9,3 +9,5 @@ if __name__=='__main__':
 	print "So should this data"
 	print "@*@"
 	print "But this data should not"
+	f = open("test.txt","w")
+	f.write("Test")
