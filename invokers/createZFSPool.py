@@ -2,8 +2,9 @@ import sys
 sys.path.append('/usr/lib/python2.7')
 from denali.cluster import Cluster
 
+
 def createZFSPool(pool_name):
-	cluster = createCluster('denaliCluster')
+	cluster = Cluster('denaliCluster')
 
 	try:
 		cluster.restore()
