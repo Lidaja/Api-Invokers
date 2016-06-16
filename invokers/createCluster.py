@@ -6,13 +6,17 @@ from denali.target import Target
 import denali.volume
 
 
-def createCluster():
+def createCluster(node_ip,vip):
 	cluster = Cluster('denaliCluster')
-	cluster.add_node('10.10.30.236')
-	cluster.vip = '10.10.30.235'
-	cluster.nic = 'eth0'
-	cluster.netmask = '24'
-	cluster.initialize()
+	try:
+		cluster.restore()
+	except ValueError as e:
+		cluster.add_node(node_ip)
+		cluster.vip = vip
+		cluster.nic = 'eth0'
+		cluster.netmask = '24'
+		cluster.initialize()
 	return cluster
+
 if __name__=='__main__':
-	createCluster()
+	createCluster(sys.argv[1],sys.argv[2])
