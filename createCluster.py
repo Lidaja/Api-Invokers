@@ -3,12 +3,19 @@ sys.path.append('/usr/lib/python2.7')
 from denali.cluster import Cluster
 
 
-def createCluster(node_ip,vip,numNodes):
+def createCluster(nodeIPs,vip):
 	nodes = []
-	last = node_ip.split(".")[-1]
-	first = ".".join(node_ip.split(".")[:-1])+"."
-	for i in range(0,int(numNodes)):
-		nodes.append(first+str(int(last)+i))
+	for n in nodeIPs.split(","):
+        	if "-" not in n:
+                	nodes.append(n)
+	        else:
+        	        m = n.split("-")
+                	first = ".".join(m[0].split(".")[:-1])
+                	start = m[0].split(".")[-1]
+                	end = m[1].split(".")[-1]
+                	for i in range(int(start),int(end)+1):
+                        	nodes.append(first+"."+str(i))
+
 	cluster = Cluster('denaliCluster')
 	try:
 		cluster.restore()
@@ -21,4 +28,4 @@ def createCluster(node_ip,vip,numNodes):
 	return cluster
 
 if __name__=='__main__':
-	createCluster(sys.argv[1],sys.argv[2],sys.argv[3])
+	createCluster(sys.argv[1],sys.argv[2])
