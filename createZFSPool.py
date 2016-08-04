@@ -5,17 +5,22 @@ from denali.cluster import Cluster
 
 def createZFSPool(pool_name, nodeIPs):
 	cluster = Cluster('denaliCluster')
-        nodes = []
+	nodes = []
         for n in nodeIPs.split(","):
                 if "-" not in n:
-                        nodes.append(n)
+                        if n not in nodes:
+                                nodes.append(n)
                 else:
                         m = n.split("-")
                         first = ".".join(m[0].split(".")[:-1])
                         start = m[0].split(".")[-1]
-                        end = m[1].split(".")[-1]
-                        for i in range(int(start),int(end)+1):
-                                nodes.append(first+"."+str(i))
+                        end = m[1]
+                        s = int(start)-int(end)
+                        s = s/abs(s)
+                        print s
+                        for i in range(int(start),int(end)-(1*s),-s):
+                                if first+"."+str(i) not in nodes:
+                                        nodes.append(first+"."+str(i))        
 	try:
 		cluster.restore()
 		zfs_pool_name = pool_name
