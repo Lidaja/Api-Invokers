@@ -17,7 +17,7 @@ def createCluster(nodeIPs,vip):
 			s = int(start)-int(end)
 			s = s/abs(s) 
 			print s
-                	for i in range(int(start),int(end)-(1*s),-s):
+                	for i in range(int(start),int(end)-s,-s):
                         	if first+"."+str(i) not in nodes:
 					nodes.append(first+"."+str(i))
 	#print nodes
