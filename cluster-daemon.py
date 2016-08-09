@@ -13,11 +13,11 @@ class ClusterDaemon(Daemon):
 	def __init__(self,pidfile, stdin='/dev/null', stdout='/dev/null', stderr='/dev/null'):
 		Daemon.__init__(self,pidfile,stdin,stdout,stderr)
 		self.cluster = None
-		self.files2funcs = {'cluster':createCluster,'zfs':createZFSPool,'service':createTargetService,'volume':createTargetVolume,'portal':createPortalGroup,'lun':createTargetLUN}
+		self.files2funcs = {'cluster':self.createCluster,'zfs':self.createZFSPool,'service':self.createTargetService,'volume':self.createTargetVolume,'portal':self.createPortalGroup,'lun':self.createTargetLUN}
 		
 	def run(self):
 		while True:
-			time.sleep(5)
+			time.sleep(1)
 			for n in self.files2funcs.keys():
 				name = '/tmp/'+n+'.txt'
 				if (os.path.isfile(name)):
@@ -27,7 +27,7 @@ class ClusterDaemon(Daemon):
 					os.remove(name)
 					
 	
-	def getNodes(self,NodeIPs):
+	def getNodes(self,nodeIPs):
 		nodes = []
 		for n in nodeIPs.split(","):
 			if "-" not in n:
@@ -46,7 +46,7 @@ class ClusterDaemon(Daemon):
 		return nodes
 
 	def createCluster(self,nodeIPs, vip):
-		nodes = getNodes(NodeIPs)
+		nodes = self.getNodes(nodeIPs)
 		self.cluster = Cluster('denaliCluster')
 		try:
 			self.cluster.restore()
@@ -58,7 +58,7 @@ class ClusterDaemon(Daemon):
 			self.cluster.initialize()
 		
 	def createZFSPool(self,zfs_pool_name, nodeIPs):
-		nodes = getNodes(nodeIPs)
+		nodes = self.getNodes(nodeIPs)
 		zfs_pool_g = self.cluster.create_group(zfs_pool_name, nodes)
 		zfs_pool_r = zfs_pool_g.create_pool(zfs_pool_name)
 		zfs_pool_r.layout = '/dev/sa'
@@ -66,7 +66,7 @@ class ClusterDaemon(Daemon):
 
 	def createTargetService(self,target_svc_name):
 		self.cluster.create_group(target_svc_name).create_target(target_svc_name).provision
-		target_svc_g = cluster.groups[target_svc_name]
+		target_svc_g = self.cluster.groups[target_svc_name]
 		
 	def createTargetVolume(self,target_vol_name, volume_ip,size,tag,pool_name):
 		zfs_pool_g = self.cluster.groups[pool_name]
