@@ -1,0 +1,4 @@
+message=$1
+file=$2
+echo $message >> $file
+echo "HELLO"
