@@ -22,7 +22,7 @@ class ClusterDaemon(Daemon):
 				name = '/tmp/'+n+'.txt'
 				if (os.path.isfile(name)):
 					f = open(name)
-					params = f.readline().split(" ")
+					params = f.readline().strip("\n").split(" ")
 					self.files2funcs[n](*params)
 					os.remove(name)
 					
@@ -47,6 +47,7 @@ class ClusterDaemon(Daemon):
 
 	def createCluster(self,nodeIPs, vip):
 		nodes = self.getNodes(nodeIPs)
+		print nodes,vip
 		self.cluster = Cluster('denaliCluster')
 		try:
 			self.cluster.restore()
