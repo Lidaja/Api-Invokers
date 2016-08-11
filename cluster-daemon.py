@@ -24,8 +24,8 @@ class ClusterDaemon(Daemon):
 					f = open(name)
 					params = f.readline().strip("\n").split(" ")
 					self.files2funcs[n](*params)
-					os.remove(name)
-					
+					print name
+					print "done"	
 	
 	def getNodes(self,nodeIPs):
 		nodes = []
@@ -48,15 +48,24 @@ class ClusterDaemon(Daemon):
 	def createCluster(self,nodeIPs, vip):
 		nodes = self.getNodes(nodeIPs)
 		print nodes,vip
+		print "1"
 		self.cluster = Cluster('denaliCluster')
 		try:
+			print "2"
 			self.cluster.restore()
+			print "3"
 		except ValueError as e:
+			print "4"
 			self.cluster.nodes = nodes
+			print "5"
 			self.cluster.vip = vip
+			print "6"
 			self.cluster.nic = 'eth0'
+			print "7"
 			self.cluster.netmask = '24'
+			print "8"
 			self.cluster.initialize()
+			print "9"
 		
 	def createZFSPool(self,zfs_pool_name, nodeIPs):
 		nodes = self.getNodes(nodeIPs)
